@@ -1,2 +1,7 @@
 # gnuplot_i
-a fork of gnuplot_i (gnuplot interfaces in ANSI C)
+
+---
+
+This is a fork of [gnuplot_i](http://ndevilla.free.fr/gnuplot/), from version 2.11
+
+Nothing fun there :P

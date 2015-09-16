@@ -35,9 +35,9 @@
 #include <stdarg.h>
 #include <assert.h>
 
-#ifdef WIN32
+#ifdef _WIN32
 #include <io.h>
-#endif // #ifdef WIN32
+#endif // #ifdef _WIN32
 
 /*---------------------------------------------------------------------------
                                 Defines
@@ -91,11 +91,11 @@ gnuplot_ctrl * gnuplot_init(void)
     gnuplot_ctrl *  handle ;
     int i;
 
-#ifndef WIN32
+#ifndef _WIN32
     if (getenv("DISPLAY") == NULL) {
         fprintf(stderr, "cannot find DISPLAY variable: is it set?\n") ;
     }
-#endif // #ifndef WIN32
+#endif // #ifndef _WIN32
 
 
     /*
@@ -661,9 +661,9 @@ char const * gnuplot_tmpfile(gnuplot_ctrl * handle)
     char *              tmp_filename = NULL;
     int                 tmp_filelen = strlen(tmp_filename_template);
 
-#ifndef WIN32
+#ifndef _WIN32
     int                 unx_fd;
-#endif // #ifndef WIN32
+#endif // #ifndef _WIN32
 
     assert(handle->tmp_filename_tbl[handle->ntmp] == NULL);
 
@@ -682,12 +682,12 @@ char const * gnuplot_tmpfile(gnuplot_ctrl * handle)
     }
     strcpy(tmp_filename, tmp_filename_template);
 
-#ifdef WIN32
+#ifdef _WIN32
     if (_mktemp(tmp_filename) == NULL)
     {
         return NULL;
     }
-#else // #ifdef WIN32
+#else // #ifdef _WIN32
     unx_fd = mkstemp(tmp_filename);
     if (unx_fd == -1)
     {
@@ -695,7 +695,7 @@ char const * gnuplot_tmpfile(gnuplot_ctrl * handle)
     }
     close(unx_fd);
 
-#endif // #ifdef WIN32
+#endif // #ifdef _WIN32
 
     handle->tmp_filename_tbl[handle->ntmp] = tmp_filename;
     handle->ntmp ++;

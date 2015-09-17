@@ -19,12 +19,12 @@ int main(int argc, char *argv[])
     printf("*** example of gnuplot control through C ***\n") ;
     h1 = gnuplot_init() ;
 
-    for (phase=0.1 ; phase<10 ; phase +=0.1) {
+    for (phase=0.1 ; phase<10 ; phase +=0.02) {
         gnuplot_resetplot(h1) ;
         gnuplot_cmd(h1, "plot sin(x+%g)", phase) ;
     }
     
-    for (phase=10 ; phase>=0.1 ; phase -=0.1) {
+    for (phase=10 ; phase>=0.1 ; phase -=0.02) {
         gnuplot_resetplot(h1) ;
         gnuplot_cmd(h1, "plot sin(x+%g)", phase) ;
     }

@@ -104,8 +104,8 @@ void gnuplot_close(gnuplot_ctrl* handle);
   Examples:
 
   @code
-  gnuplot_cmd(g, "plot %d*x", 23.0);
-  gnuplot_cmd(g, "plot %g * cos(%g * x)", 32.0, -3.0);
+    gnuplot_cmd(g, "plot %d*x", 23.0);
+    gnuplot_cmd(g, "plot %g * cos(%g * x)", 32.0, -3.0);
   @endcode
 
   Since the communication to the gnuplot process is run through
@@ -177,31 +177,31 @@ void gnuplot_resetplot(gnuplot_ctrl* handle);
 
 /*--------------------------------------------------------------------------*/
 /**
-  @brief    Plots a 2d graph from a list of doubles.
+  @brief    Plots a 2d graph from a list of double.
   @param    handle  Gnuplot session control handle.
-  @param    d       Array of doubles.
+  @param    d       Array of double.
   @param    n       Number of values in the passed array.
   @param    title   Title of the plot.
   @return   void
 
-  Plots out a 2d graph from a list of doubles. The x-coordinate is the
+  Plots out a 2d graph from a list of double. The x-coordinate is the
   index of the double in the list, the y coordinate is the double in
   the list.
 
   Example:
 
   @code
-    gnuplot_ctrl    *h ;
-    double          d[50] ;
-    int             i ;
+    gnuplot_ctrl* h;
+    double d[50];
+    int i;
 
-    h = gnuplot_init() ;
-    for (i=0 ; i<50 ; i++) {
-        d[i] = (double)(i*i) ;
+    h = gnuplot_init();
+    for (i = 0; i < 50; i++) {
+        d[i] = (double)(i * i);
     }
-    gnuplot_plot_x(h, d, 50, "parabola") ;
-    sleep(2) ;
-    gnuplot_close(h) ;
+    gnuplot_plot_x(h, d, 50, "parabola");
+    sleep(2);
+    gnuplot_close(h);
   @endcode
  */
 /*--------------------------------------------------------------------------*/
@@ -213,11 +213,55 @@ void gnuplot_plot_x(
 
 /*--------------------------------------------------------------------------*/
 /**
+  @brief    Plots a 2d graph from several lists of double.
+  @param    handle  Gnuplot session control handle.
+  @param    d       Pointer to the arrays of double.
+  @param    n       Number of values in the passed array.
+  @param    l       Number of lists.
+  @param    title   Pointer to titles of the plot.
+  @return   void
+
+  Plots out a 2d graph from several lists of double with the same
+  length. The x-coordinate is the index of the double in the list,
+  the y coordinate is the double in the list.
+
+  Example:
+
+  @code
+    gnuplot_ctrl* h;
+    double** d = (double**)malloc(sizeof(double*) * 2);
+    d[0] = (double*)malloc(sizeof(double) * 50);
+    d[1] = (double*)malloc(sizeof(double) * 50);
+    char t0[] = "2^i";
+    char t1[] = "i^2";
+    char* t[2] = { t0, t1 };
+    int i;
+
+    h = gnuplot_init();
+    for (i = 0; i < 50; i++) {
+        d[0][i] = (double)(pow(2, i));
+        d[1][i] = (double)(pow(i, 2));
+    }
+    gnuplot_plot_multi_x(h, d, 50, 2, t);
+    sleep(2);
+    gnuplot_close(h);
+  @endcode
+ */
+/*--------------------------------------------------------------------------*/
+void gnuplot_plot_multi_x(
+    gnuplot_ctrl* handle,
+    double** d,
+    int n,
+    int l,
+    char** title);
+
+/*--------------------------------------------------------------------------*/
+/**
   @brief    Plot a 2d graph from a list of points.
   @param    handle      Gnuplot session control handle.
   @param    x           Pointer to a list of x coordinates.
   @param    y           Pointer to a list of y coordinates.
-  @param    n           Number of doubles in x (assumed the same as in y).
+  @param    n           Number of double in x (assumed the same as in y).
   @param    title       Title of the plot.
   @return   void
 
@@ -226,19 +270,19 @@ void gnuplot_plot_x(
   contain the same number of values.
 
   @code
-    gnuplot_ctrl    *h ;
-    double          x[50] ;
-    double          y[50] ;
-    int             i ;
+    gnuplot_ctrl* h;
+    double x[50];
+    double y[50];
+    int i;
 
-    h = gnuplot_init() ;
-    for (i=0 ; i<50 ; i++) {
-        x[i] = (double)(i)/10.0 ;
-        y[i] = x[i] * x[i] ;
+    h = gnuplot_init();
+    for (i = 0; i < 50; i++) {
+        x[i] = (double)(i) / 10.0;
+        y[i] = x[i] * x[i];
     }
-    gnuplot_plot_xy(h, x, y, 50, "parabola") ;
-    sleep(2) ;
-    gnuplot_close(h) ;
+    gnuplot_plot_xy(h, x, y, 50, "parabola");
+    sleep(2);
+    gnuplot_close(h);
   @endcode
  */
 /*--------------------------------------------------------------------------*/
@@ -248,6 +292,102 @@ void gnuplot_plot_xy(
     double* y,
     int n,
     char* title);
+
+/*--------------------------------------------------------------------------*/
+/**
+  @brief    Plot a 2d graph from several lists of double with the same x.
+  @param    handle      Gnuplot session control handle.
+  @param    x           Pointer to a list of x coordinates.
+  @param    y           Pointer to lists of y coordinates.
+  @param    n           Number of double in x (assumed the same as in y).
+  @param    l           Number of lists.
+  @param    title       Pointer to titles of the plot.
+  @return   void
+
+  Plots out a 2d graph from several lists of points with the same x.
+  Provide points through a list of x and several lists of y coordinates.
+  All provided arrays are assumed to contain the same number of values.
+
+  @code
+    gnuplot_ctrl* h;
+    double x[50];
+    double** y = (double**)malloc(sizeof(double*) * 2);
+    y[0] = (double*)malloc(sizeof(double) * 50);
+    y[1] = (double*)malloc(sizeof(double) * 50);
+    char t0[] = "2^i";
+    char t1[] = "i^2";
+    char* t[2] = { t0, t1 };
+    int i;
+
+    h = gnuplot_init();
+    for (i = 0; i < 50; i++) {
+        x[i] = (double)(i) / 10.0;
+        y[0][i] = pow(2, i);
+        y[1][i] = pow(i, 2);
+    }
+    gnuplot_plot_x_multi_y(h, x, y, 50, 2, t);
+    sleep(2);
+    gnuplot_close(h);
+  @endcode
+ */
+/*--------------------------------------------------------------------------*/
+void gnuplot_plot_x_multi_y(
+    gnuplot_ctrl* handle,
+    double* x,
+    double** y,
+    int n,
+    int l,
+    char** title);
+
+/*--------------------------------------------------------------------------*/
+/**
+  @brief    Plot a 2d graph from several lists of double.
+  @param    handle      Gnuplot session control handle.
+  @param    x           Pointer to lists of x coordinates.
+  @param    y           Pointer to lists of y coordinates.
+  @param    n           Pointer to numbers of double in x.
+  @param    l           Number of lists.
+  @param    title       Pointer to titles of the plot.
+  @return   void
+
+  Plots out a 2d graph from several lists of points. Provide points
+  through several lists of x and several lists of y coordinates. All
+  provided arrays are assumed to contain the same number of values.
+
+  @code
+    gnuplot_ctrl* h;
+    double** x = (double**)malloc(sizeof(double*) * 2);
+    x[0] = (double*)malloc(sizeof(double) * 50);
+    x[1] = (double*)malloc(sizeof(double) * 50);
+    double** y = (double**)malloc(sizeof(double*) * 2);
+    y[0] = (double*)malloc(sizeof(double) * 50);
+    y[1] = (double*)malloc(sizeof(double) * 50);
+    int a[2] = { 50, 50 };
+    char t0[] = "2^i";
+    char t1[] = "i^2";
+    char* t[2] = { t0, t1 };
+    int i;
+
+    h = gnuplot_init();
+    for (i = 0; i < 50; i++) {
+        x[0][i] = (double)(i) / 10.0;
+        x[1][i] = (double)(i) / 10.0 + 1;
+        y[0][i] = pow(2, i);
+        y[1][i] = pow(i, 2);
+    }
+    gnuplot_plot_multi_xy(h, x, y, a, 2, t);
+    sleep(2);
+    gnuplot_close(h);
+  @endcode
+ */
+/*--------------------------------------------------------------------------*/
+void gnuplot_plot_multi_xy(
+    gnuplot_ctrl* handle,
+    double** x,
+    double** y,
+    int* n,
+    int l,
+    char** title);
 
 /*--------------------------------------------------------------------------*/
 /**
@@ -264,13 +404,13 @@ void gnuplot_plot_xy(
   Example:
 
   @code
-    gnuplot_ctrl    *   h ;
-    double              a, b ;
+    gnuplot_ctrl* h;
+    double a, b;
 
-    h = gnuplot_init() ;
-    gnuplot_plot_slope(h, 1.0, 0.0, "unity slope") ;
-    sleep(2) ;
-    gnuplot_close(h) ;
+    h = gnuplot_init();
+    gnuplot_plot_slope(h, 1.0, 0.0, "unity slope");
+    sleep(2);
+    gnuplot_close(h);
   @endcode
  */
 /*--------------------------------------------------------------------------*/
@@ -294,13 +434,13 @@ void gnuplot_plot_slope(
   Example:
 
   @code
-        gnuplot_ctrl    *h ;
-        char            eq[80] ;
+    gnuplot_ctrl* h;
+    char eq[80];
 
-        h = gnuplot_init() ;
-        strcpy(eq, "sin(x) * cos(2*x)") ;
-        gnuplot_plot_equation(h, eq, "sine wave", normal) ;
-        gnuplot_close(h) ;
+    h = gnuplot_init();
+    strcpy(eq, "sin(x) * cos(2*x)");
+    gnuplot_plot_equation(h, eq, "sine wave", normal);
+    gnuplot_close(h);
   @endcode
  */
 /*--------------------------------------------------------------------------*/

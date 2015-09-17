@@ -107,8 +107,7 @@ void gnuplot_setstyle(gnuplot_ctrl* handle, char* plot_style)
     if (strcmp(plot_style, "lines") && strcmp(plot_style, "points") && strcmp(plot_style, "linespoints") && strcmp(plot_style, "impulses") && strcmp(plot_style, "dots") && strcmp(plot_style, "steps") && strcmp(plot_style, "errorbars") && strcmp(plot_style, "boxes") && strcmp(plot_style, "boxerrorbars")) {
         fprintf(stderr, "warning: unknown requested style: using points\n");
         strcpy(handle->pstyle, "points");
-    }
-    else {
+    } else {
         strcpy(handle->pstyle, plot_style);
     }
     return;
@@ -152,6 +151,60 @@ void gnuplot_plot_x(
     return;
 }
 
+void gnuplot_plot_multi_x(
+    gnuplot_ctrl* handle,
+    double** d,
+    int n,
+    int l,
+    char** title)
+{
+    if (handle == NULL || d == NULL || (n < 1) || (l < 1))
+        return;
+    for (int i = 0; i < l; i++) {
+        if (d[i] == NULL)
+            return;
+    }
+    char const* cmd = (handle->nplots > 0) ? "replot" : "plot";
+
+    if (title == NULL) {
+        for (int i = 0; i < l; i++) {
+            title[i] = "(none)";
+        }
+    } else {
+        for (int i = 0; i < l; i++) {
+            title[i] = (title[i] == NULL) ? "(none)" : title[i];
+        }
+    }
+
+    char tmp[128], buf[2048];
+    sprintf(buf, "%s '-' title \"%s\" with %s",
+        cmd, title[0], handle->pstyle);
+
+    for (int i = 1; i < l; i++) {
+        sprintf(tmp, ", '-' title \"%s\" with %s",
+            title[i], handle->pstyle);
+
+        if (strlen(buf) + strlen(tmp) < 2047) {
+            strcpy(buf + strlen(buf), tmp);
+        } else {
+            return;
+        }
+    }
+
+    gnuplot_cmd(handle, buf);
+
+    for (int i = 0; i < l; i++) {
+        for (int j = 0; j < n; j++) {
+            gnuplot_cmd(handle, "%11le", d[i][j]);
+        }
+
+        gnuplot_cmd(handle, "e");
+    }
+
+    handle->nplots += l;
+    return;
+}
+
 void gnuplot_plot_xy(
     gnuplot_ctrl* handle,
     double* x,
@@ -173,6 +226,116 @@ void gnuplot_plot_xy(
     gnuplot_cmd(handle, "e");
 
     handle->nplots++;
+    return;
+}
+
+void gnuplot_plot_x_multi_y(
+    gnuplot_ctrl* handle,
+    double* x,
+    double** y,
+    int n,
+    int l,
+    char** title)
+{
+    if (handle == NULL || x == NULL || y == NULL || (n < 1) || (l < 1))
+        return;
+    for (int i = 0; i < l; i++) {
+        if (y[i] == NULL)
+            return;
+    }
+    char const* cmd = (handle->nplots > 0) ? "replot" : "plot";
+
+    if (title == NULL) {
+        for (int i = 0; i < l; i++) {
+            title[i] = "(none)";
+        }
+    } else {
+        for (int i = 0; i < l; i++) {
+            title[i] = (title[i] == NULL) ? "(none)" : title[i];
+        }
+    }
+
+    char tmp[128], buf[2048];
+    sprintf(buf, "%s '-' title \"%s\" with %s",
+        cmd, title[0], handle->pstyle);
+
+    for (int i = 1; i < l; i++) {
+        sprintf(tmp, ", '-' title \"%s\" with %s",
+            title[i], handle->pstyle);
+
+        if (strlen(buf) + strlen(tmp) < 2047) {
+            strcpy(buf + strlen(buf), tmp);
+        } else {
+            return;
+        }
+    }
+
+    gnuplot_cmd(handle, buf);
+
+    for (int i = 0; i < l; i++) {
+        for (int j = 0; j < n; j++) {
+            gnuplot_cmd(handle, "%11le %11le", x[j], y[i][j]);
+        }
+
+        gnuplot_cmd(handle, "e");
+    }
+
+    handle->nplots += l;
+    return;
+}
+
+void gnuplot_plot_multi_xy(
+    gnuplot_ctrl* handle,
+    double** x,
+    double** y,
+    int* n,
+    int l,
+    char** title)
+{
+    if (handle == NULL || x == NULL || y == NULL || n == NULL || (l < 1))
+        return;
+    for (int i = 0; i < l; i++) {
+        if (x[i] == NULL || y[i] == NULL || (n[i] < 1))
+            return;
+    }
+    char const* cmd = (handle->nplots > 0) ? "replot" : "plot";
+
+    if (title == NULL) {
+        for (int i = 0; i < l; i++) {
+            title[i] = "(none)";
+        }
+    } else {
+        for (int i = 0; i < l; i++) {
+            title[i] = (title[i] == NULL) ? "(none)" : title[i];
+        }
+    }
+
+    char tmp[128], buf[2048];
+    sprintf(buf, "%s '-' title \"%s\" with %s",
+        cmd, title[0], handle->pstyle);
+
+    for (int i = 1; i < l; i++) {
+        sprintf(tmp, ", '-' title \"%s\" with %s",
+            title[i], handle->pstyle);
+
+        if (strlen(buf) + strlen(tmp) < 2047) {
+            strcpy(buf + strlen(buf), tmp);
+        } else {
+            return;
+        }
+    }
+
+    gnuplot_cmd(handle, buf);
+
+    for (int i = 0; i < l; i++) {
+        for (int j = 0; j < n[i]; j++) {
+            gnuplot_cmd(handle, "%11le %11le", x[i][j], y[i][j]);
+        }
+
+        gnuplot_cmd(handle, "e");
+    }
+
+    handle->nplots += l;
     return;
 }
 

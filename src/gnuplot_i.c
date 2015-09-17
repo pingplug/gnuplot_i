@@ -47,28 +47,6 @@
                           Prototype Functions
  ---------------------------------------------------------------------------*/
 
-/**
- * Creates a temporary file name for writing
- *
- * @author Peter (12/9/2011)
- *
- * @param handle
- *
- * @return char const * Pointer to file name string.
- */
-char const * gnuplot_tmpfile(gnuplot_ctrl * handle);
-
-/**
- * Plot a temporary file.
- *
- * @author Peter (12/9/2011)
- *
- * @param handle
- * @param tmp_filename
- * @param title
- */
-void gnuplot_plot_atmpfile(gnuplot_ctrl * handle, char const* tmp_filename, char const* title);
-
 /*---------------------------------------------------------------------------
                             Function codes
  ---------------------------------------------------------------------------*/
@@ -104,7 +82,6 @@ gnuplot_ctrl * gnuplot_init(void)
     handle = (gnuplot_ctrl*)malloc(sizeof(gnuplot_ctrl)) ;
     handle->nplots = 0 ;
     gnuplot_setstyle(handle, "points") ;
-    handle->ntmp = 0 ;
 
     handle->gnucmd = popen("gnuplot", "w") ;
     if (handle->gnucmd == NULL) {
@@ -113,10 +90,6 @@ gnuplot_ctrl * gnuplot_init(void)
         return NULL ;
     }
 
-    for (i=0;i<GP_MAX_TMP_FILES; i++)
-    {
-        handle->tmp_filename_tbl[i] = NULL;
-    }
     return handle;
 }
 
@@ -141,14 +114,6 @@ void gnuplot_close(gnuplot_ctrl * handle)
     if (pclose(handle->gnucmd) == -1) {
         fprintf(stderr, "problem closing communication to gnuplot\n") ;
         return ;
-    }
-    if (handle->ntmp) {
-        for (i=0 ; i<handle->ntmp ; i++) {
-            remove(handle->tmp_filename_tbl[i]) ;
-            free(handle->tmp_filename_tbl[i]);
-            handle->tmp_filename_tbl[i] = NULL;
-
-        }
     }
     free(handle) ;
     return ;
@@ -284,15 +249,6 @@ void gnuplot_set_ylabel(gnuplot_ctrl * h, char * label)
 void gnuplot_resetplot(gnuplot_ctrl * h)
 {
     int     i ;
-    if (h->ntmp) {
-        for (i=0 ; i<h->ntmp ; i++) {
-            remove(h->tmp_filename_tbl[i]) ;
-            free(h->tmp_filename_tbl[i]);
-            h->tmp_filename_tbl[i] = NULL;
-
-        }
-    }
-    h->ntmp = 0 ;
     h->nplots = 0 ;
     return ;
 }
@@ -335,28 +291,19 @@ void gnuplot_plot_x(
     char            *   title
 )
 {
-    int     i ;
-    FILE*   tmpfd ;
-    char const * tmpfname;
-
     if (handle==NULL || d==NULL || (n<1)) return ;
+    char const *    cmd    = (handle->nplots > 0) ? "replot" : "plot";
+    title                  = (title == NULL)      ? "(none)" : title;
 
-    /* Open temporary file for output   */
-    tmpfname = gnuplot_tmpfile(handle);
-    tmpfd = fopen(tmpfname, "w");
+    gnuplot_cmd(handle, "%s '-' title \"%s\" with %s",
+                  cmd, title, handle->pstyle) ;
 
-    if (tmpfd == NULL) {
-        fprintf(stderr,"cannot create temporary file: exiting plot") ;
-        return ;
+    for (int i = 0; i < n; i++) {
+        gnuplot_cmd(handle, "%11le", d[i]);
     }
+    gnuplot_cmd(handle, "e");
 
-    /* Write data to this file  */
-    for (i=0 ; i<n ; i++) {
-      fprintf(tmpfd, "%.18e\n", d[i]);
-    }
-    fclose(tmpfd) ;
-
-    gnuplot_plot_atmpfile(handle,tmpfname,title);
+    handle->nplots++ ;
     return ;
 }
 
@@ -402,28 +349,19 @@ void gnuplot_plot_xy(
     char            *   title
 )
 {
-    int     i ;
-    FILE*   tmpfd ;
-    char const * tmpfname;
-
     if (handle==NULL || x==NULL || y==NULL || (n<1)) return ;
+    char const *    cmd    = (handle->nplots > 0) ? "replot" : "plot";
+    title                  = (title == NULL)      ? "(none)" : title;
 
-    /* Open temporary file for output   */
-    tmpfname = gnuplot_tmpfile(handle);
-    tmpfd = fopen(tmpfname, "w");
+    gnuplot_cmd(handle, "%s '-' title \"%s\" with %s",
+                  cmd, title, handle->pstyle) ;
 
-    if (tmpfd == NULL) {
-        fprintf(stderr,"cannot create temporary file: exiting plot") ;
-        return ;
+    for (int i = 0; i < n; i++) {
+        gnuplot_cmd(handle, "%11le %11le", x[i], y[i]);
     }
+    gnuplot_cmd(handle, "e");
 
-    /* Write data to this file  */
-    for (i=0 ; i<n; i++) {
-        fprintf(tmpfd, "%.18e %.18e\n", x[i], y[i]) ;
-    }
-    fclose(tmpfd) ;
-
-    gnuplot_plot_atmpfile(handle,tmpfname,title);
+    handle->nplots++ ;
     return ;
 }
 
@@ -654,63 +592,5 @@ int gnuplot_write_multi_csv(
 
     return 0;
 }
-
-char const * gnuplot_tmpfile(gnuplot_ctrl * handle)
-{
-    static char const * tmp_filename_template = "gnuplot_tmpdatafile_XXXXXX";
-    char *              tmp_filename = NULL;
-    int                 tmp_filelen = strlen(tmp_filename_template);
-
-#ifndef _WIN32
-    int                 unx_fd;
-#endif // #ifndef _WIN32
-
-    assert(handle->tmp_filename_tbl[handle->ntmp] == NULL);
-
-    /* Open one more temporary file? */
-    if (handle->ntmp == GP_MAX_TMP_FILES - 1) {
-        fprintf(stderr,
-                "maximum # of temporary files reached (%d): cannot open more",
-                GP_MAX_TMP_FILES) ;
-        return NULL;
-    }
-
-    tmp_filename = (char*) malloc(tmp_filelen+1);
-    if (tmp_filename == NULL)
-    {
-        return NULL;
-    }
-    strcpy(tmp_filename, tmp_filename_template);
-
-#ifdef _WIN32
-    if (_mktemp(tmp_filename) == NULL)
-    {
-        return NULL;
-    }
-#else // #ifdef _WIN32
-    unx_fd = mkstemp(tmp_filename);
-    if (unx_fd == -1)
-    {
-        return NULL;
-    }
-    close(unx_fd);
-
-#endif // #ifdef _WIN32
-
-    handle->tmp_filename_tbl[handle->ntmp] = tmp_filename;
-    handle->ntmp ++;
-    return tmp_filename;
-}
-
-void gnuplot_plot_atmpfile(gnuplot_ctrl * handle, char const* tmp_filename, char const* title)
-{
-    char const *    cmd    = (handle->nplots > 0) ? "replot" : "plot";
-    title                  = (title == NULL)      ? "(none)" : title;
-    gnuplot_cmd(handle, "%s \"%s\" title \"%s\" with %s", cmd, tmp_filename,
-                  title, handle->pstyle) ;
-    handle->nplots++ ;
-    return ;
-}
-
 
 /* vim: set ts=4 et sw=4 tw=75 */

@@ -30,9 +30,6 @@
  ---------------------------------------------------------------------------*/
 #include <stdio.h>
 
-/** Maximal number of simultaneous temporary files */
-#define GP_MAX_TMP_FILES    64
-
 /*---------------------------------------------------------------------------
                                 New Types
  ---------------------------------------------------------------------------*/
@@ -60,11 +57,6 @@ typedef struct _GNUPLOT_CTRL_ {
     int       nplots ;
     /** Current plotting style */
     char      pstyle[32] ;
-
-    /** Pointer to table of names of temporary files */
-    char*      tmp_filename_tbl[GP_MAX_TMP_FILES] ;
-    /** Number of temporary files */
-    int       ntmp ;
 } gnuplot_ctrl ;
 
 /*---------------------------------------------------------------------------

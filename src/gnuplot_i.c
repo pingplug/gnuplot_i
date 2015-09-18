@@ -31,7 +31,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdarg.h>
-#include <assert.h>
 
 #ifdef _WIN32
 #include <io.h>
@@ -52,7 +51,6 @@
 gnuplot_ctrl* gnuplot_init(void)
 {
     gnuplot_ctrl* handle;
-    int i;
 
 #ifndef _WIN32
     if (getenv("DISPLAY") == NULL) {
@@ -79,14 +77,11 @@ gnuplot_ctrl* gnuplot_init(void)
 
 void gnuplot_close(gnuplot_ctrl* handle)
 {
-    int i;
-
     if (pclose(handle->gnucmd) == -1) {
         fprintf(stderr, "problem closing communication to gnuplot\n");
         return;
     }
     free(handle);
-    return;
 }
 
 void gnuplot_cmd(gnuplot_ctrl* handle, char const* cmd, ...)
@@ -99,7 +94,6 @@ void gnuplot_cmd(gnuplot_ctrl* handle, char const* cmd, ...)
 
     fputs("\n", handle->gnucmd);
     fflush(handle->gnucmd);
-    return;
 }
 
 void gnuplot_setstyle(gnuplot_ctrl* handle, char* plot_style)
@@ -110,7 +104,6 @@ void gnuplot_setstyle(gnuplot_ctrl* handle, char* plot_style)
     } else {
         strcpy(handle->pstyle, plot_style);
     }
-    return;
 }
 
 void gnuplot_set_xlabel(gnuplot_ctrl* handle, char* label)
@@ -148,7 +141,6 @@ void gnuplot_plot_x(
     gnuplot_cmd(handle, "e");
 
     handle->nplots++;
-    return;
 }
 
 void gnuplot_plot_multi_x(
@@ -202,7 +194,6 @@ void gnuplot_plot_multi_x(
     }
 
     handle->nplots += l;
-    return;
 }
 
 void gnuplot_plot_xy(
@@ -226,7 +217,6 @@ void gnuplot_plot_xy(
     gnuplot_cmd(handle, "e");
 
     handle->nplots++;
-    return;
 }
 
 void gnuplot_plot_x_multi_y(
@@ -281,7 +271,6 @@ void gnuplot_plot_x_multi_y(
     }
 
     handle->nplots += l;
-    return;
 }
 
 void gnuplot_plot_multi_xy(
@@ -336,7 +325,6 @@ void gnuplot_plot_multi_xy(
     }
 
     handle->nplots += l;
-    return;
 }
 
 void gnuplot_plot_slope(
@@ -352,7 +340,6 @@ void gnuplot_plot_slope(
         cmd, a, b, title, handle->pstyle);
 
     handle->nplots++;
-    return;
 }
 
 void gnuplot_plot_equation(
@@ -366,7 +353,6 @@ void gnuplot_plot_equation(
     gnuplot_cmd(handle, "%s %s title \"%s\" with %s",
         cmd, equation, title, handle->pstyle);
     handle->nplots++;
-    return;
 }
 
 /* vim: set ts=4 et sw=4 tw=80 */

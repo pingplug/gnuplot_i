@@ -104,7 +104,7 @@ void gnuplot_close(gnuplot_ctrl* handle);
   Examples:
 
   @code
-    gnuplot_cmd(g, "plot %d*x", 23.0);
+    gnuplot_cmd(g, "plot %d * x", 23.0);
     gnuplot_cmd(g, "plot %g * cos(%g * x)", 32.0, -3.0);
   @endcode
 
@@ -197,7 +197,7 @@ void gnuplot_resetplot(gnuplot_ctrl* handle);
 
     h = gnuplot_init();
     for (i = 0; i < 50; i++) {
-        d[i] = (double)(i * i);
+        d[i] = i * i;
     }
     gnuplot_plot_x(h, d, 50, "parabola");
     sleep(2);
@@ -225,6 +225,8 @@ void gnuplot_plot_x(
   length. The x-coordinate is the index of the double in the list,
   the y coordinate is the double in the list.
 
+  It is useful if you want to draw more than one line to a file
+
   Example:
 
   @code
@@ -239,11 +241,14 @@ void gnuplot_plot_x(
 
     h = gnuplot_init();
     for (i = 0; i < 50; i++) {
-        d[0][i] = (double)(pow(2, i));
-        d[1][i] = (double)(pow(i, 2));
+        d[0][i] = pow(2, i);
+        d[1][i] = pow(i, 2);
     }
     gnuplot_plot_multi_x(h, d, 50, 2, t);
     sleep(2);
+    free(d[0]);
+    free(d[1]);
+    free(d);
     gnuplot_close(h);
   @endcode
  */
@@ -268,6 +273,8 @@ void gnuplot_plot_multi_x(
   Plots out a 2d graph from a list of points. Provide points through a list
   of x and a list of y coordinates. Both provided arrays are assumed to
   contain the same number of values.
+
+  Example:
 
   @code
     gnuplot_ctrl* h;
@@ -308,6 +315,10 @@ void gnuplot_plot_xy(
   Provide points through a list of x and several lists of y coordinates.
   All provided arrays are assumed to contain the same number of values.
 
+  It is useful if you want to draw more than one line to a file
+
+  Example:
+
   @code
     gnuplot_ctrl* h;
     double x[50];
@@ -327,6 +338,10 @@ void gnuplot_plot_xy(
     }
     gnuplot_plot_x_multi_y(h, x, y, 50, 2, t);
     sleep(2);
+
+    free(y[0]);
+    free(y[1]);
+    free(y);
     gnuplot_close(h);
   @endcode
  */
@@ -354,6 +369,10 @@ void gnuplot_plot_x_multi_y(
   through several lists of x and several lists of y coordinates. All
   provided arrays are assumed to contain the same number of values.
 
+  It is useful if you want to draw more than one line to a file
+
+  Example:
+
   @code
     gnuplot_ctrl* h;
     double** x = (double**)malloc(sizeof(double*) * 2);
@@ -371,12 +390,19 @@ void gnuplot_plot_x_multi_y(
     h = gnuplot_init();
     for (i = 0; i < 50; i++) {
         x[0][i] = (double)(i) / 10.0;
-        x[1][i] = (double)(i) / 10.0 + 1;
+        x[1][i] = (double)(i) / 10.0 + 1.0;
         y[0][i] = pow(2, i);
         y[1][i] = pow(i, 2);
     }
     gnuplot_plot_multi_xy(h, x, y, a, 2, t);
     sleep(2);
+
+    free(x[0]);
+    free(x[1]);
+    free(x);
+    free(y[0]);
+    free(y[1]);
+    free(y);
     gnuplot_close(h);
   @endcode
  */
@@ -438,7 +464,7 @@ void gnuplot_plot_slope(
     char eq[80];
 
     h = gnuplot_init();
-    strcpy(eq, "sin(x) * cos(2*x)");
+    strcpy(eq, "sin(x) * cos(2 * x)");
     gnuplot_plot_equation(h, eq, "sine wave", normal);
     gnuplot_close(h);
   @endcode

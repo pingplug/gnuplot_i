@@ -157,7 +157,7 @@ void gnuplot_plot_x(
         cmd, title, handle->pstyle);
 
     for (int i = 0; i < n; i++) {
-        gnuplot_printf(handle, "%11le", d[i]);
+        gnuplot_printf(handle, "%18e", d[i]);
     }
     gnuplot_cmd(handle, "e");
 
@@ -201,7 +201,7 @@ void gnuplot_plot_multi_x(
 
     for (int i = 0; i < l; i++) {
         for (int j = 0; j < n; j++) {
-            gnuplot_printf(handle, "%11le", d[i][j]);
+            gnuplot_printf(handle, "%18e", d[i][j]);
         }
 
         gnuplot_cmd(handle, "e");
@@ -226,7 +226,7 @@ void gnuplot_plot_xy(
         cmd, title, handle->pstyle);
 
     for (int i = 0; i < n; i++) {
-        gnuplot_printf(handle, "%11le %11le", x[i], y[i]);
+        gnuplot_printf(handle, "%18e %18e", x[i], y[i]);
     }
     gnuplot_cmd(handle, "e");
 
@@ -271,7 +271,7 @@ void gnuplot_plot_x_multi_y(
 
     for (int i = 0; i < l; i++) {
         for (int j = 0; j < n; j++) {
-            gnuplot_printf(handle, "%11le %11le", x[j], y[i][j]);
+            gnuplot_printf(handle, "%18e %18e", x[j], y[i][j]);
         }
 
         gnuplot_cmd(handle, "e");
@@ -318,7 +318,7 @@ void gnuplot_plot_multi_xy(
 
     for (int i = 0; i < l; i++) {
         for (int j = 0; j < n[i]; j++) {
-            gnuplot_printf(handle, "%11le %11le", x[i][j], y[i][j]);
+            gnuplot_printf(handle, "%18e %18e", x[i][j], y[i][j]);
         }
 
         gnuplot_cmd(handle, "e");
@@ -336,7 +336,7 @@ void gnuplot_plot_slope(
     char const* cmd = (handle->nplots > 0) ? "replot" : "plot";
     title = (title == NULL) ? "(none)" : title;
 
-    gnuplot_cmd(handle, "%s %.18e * x + %.18e title \"%s\" with %s",
+    gnuplot_cmd(handle, "%s %18e * x + %18e title \"%s\" with %s",
         cmd, a, b, title, handle->pstyle);
 
     handle->nplots++;

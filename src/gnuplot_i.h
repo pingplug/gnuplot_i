@@ -24,6 +24,10 @@
 #ifndef _GNUPLOT_PIPES_H_
 #define _GNUPLOT_PIPES_H_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /*---------------------------------------------------------------------------
                                 Includes
  ---------------------------------------------------------------------------*/
@@ -504,5 +508,9 @@ void gnuplot_plot_equation(
     gnuplot_ctrl* handle,
     char* equation,
     char* title);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

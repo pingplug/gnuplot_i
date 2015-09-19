@@ -40,6 +40,10 @@
                                 Defines
  ---------------------------------------------------------------------------*/
 
+// alloc the buffer (64K)
+#define BUF_SIZE 1 << 16
+char* BUF;
+
 /*---------------------------------------------------------------------------
                           Prototype Functions
  ---------------------------------------------------------------------------*/
@@ -72,6 +76,10 @@ gnuplot_ctrl* gnuplot_init(void)
         return NULL;
     }
 
+    // set the buffer, in an easy way
+    BUF = (char*)malloc(BUF_SIZE);
+    setbuf(handle->gnucmd, BUF);
+
     return handle;
 }
 
@@ -81,6 +89,8 @@ void gnuplot_close(gnuplot_ctrl* handle)
         fprintf(stderr, "problem closing communication to gnuplot\n");
         return;
     }
+
+    free(BUF);
     free(handle);
 }
 
@@ -94,6 +104,17 @@ void gnuplot_cmd(gnuplot_ctrl* handle, char const* cmd, ...)
 
     fputs("\n", handle->gnucmd);
     fflush(handle->gnucmd);
+}
+
+void gnuplot_printf(gnuplot_ctrl* handle, char const* cmd, ...)
+{
+    va_list ap;
+
+    va_start(ap, cmd);
+    vfprintf(handle->gnucmd, cmd, ap);
+    va_end(ap);
+
+    fputs("\n", handle->gnucmd);
 }
 
 void gnuplot_setstyle(gnuplot_ctrl* handle, char* plot_style)
@@ -136,7 +157,7 @@ void gnuplot_plot_x(
         cmd, title, handle->pstyle);
 
     for (int i = 0; i < n; i++) {
-        gnuplot_cmd(handle, "%11le", d[i]);
+        gnuplot_printf(handle, "%11le", d[i]);
     }
     gnuplot_cmd(handle, "e");
 
@@ -168,26 +189,19 @@ void gnuplot_plot_multi_x(
         }
     }
 
-    char tmp[128], buf[2048];
-    sprintf(buf, "%s '-' title \"%s\" with %s",
+    gnuplot_printf(handle, "%s '-' title \"%s\" with %s \\",
         cmd, title[0], handle->pstyle);
 
     for (int i = 1; i < l; i++) {
-        sprintf(tmp, ", '-' title \"%s\" with %s",
+        gnuplot_printf(handle, ", '-' title \"%s\" with %s \\",
             title[i], handle->pstyle);
-
-        if (strlen(buf) + strlen(tmp) < 2047) {
-            strcpy(buf + strlen(buf), tmp);
-        } else {
-            return;
-        }
     }
 
-    gnuplot_cmd(handle, buf);
+    gnuplot_cmd(handle, "");
 
     for (int i = 0; i < l; i++) {
         for (int j = 0; j < n; j++) {
-            gnuplot_cmd(handle, "%11le", d[i][j]);
+            gnuplot_printf(handle, "%11le", d[i][j]);
         }
 
         gnuplot_cmd(handle, "e");
@@ -212,7 +226,7 @@ void gnuplot_plot_xy(
         cmd, title, handle->pstyle);
 
     for (int i = 0; i < n; i++) {
-        gnuplot_cmd(handle, "%11le %11le", x[i], y[i]);
+        gnuplot_printf(handle, "%11le %11le", x[i], y[i]);
     }
     gnuplot_cmd(handle, "e");
 
@@ -245,26 +259,19 @@ void gnuplot_plot_x_multi_y(
         }
     }
 
-    char tmp[128], buf[2048];
-    sprintf(buf, "%s '-' title \"%s\" with %s",
+    gnuplot_cmd(handle, "%s '-' title \"%s\" with %s \\",
         cmd, title[0], handle->pstyle);
 
     for (int i = 1; i < l; i++) {
-        sprintf(tmp, ", '-' title \"%s\" with %s",
+        gnuplot_printf(handle, ", '-' title \"%s\" with %s \\",
             title[i], handle->pstyle);
-
-        if (strlen(buf) + strlen(tmp) < 2047) {
-            strcpy(buf + strlen(buf), tmp);
-        } else {
-            return;
-        }
     }
 
-    gnuplot_cmd(handle, buf);
+    gnuplot_cmd(handle, "");
 
     for (int i = 0; i < l; i++) {
         for (int j = 0; j < n; j++) {
-            gnuplot_cmd(handle, "%11le %11le", x[j], y[i][j]);
+            gnuplot_printf(handle, "%11le %11le", x[j], y[i][j]);
         }
 
         gnuplot_cmd(handle, "e");
@@ -299,26 +306,19 @@ void gnuplot_plot_multi_xy(
         }
     }
 
-    char tmp[128], buf[2048];
-    sprintf(buf, "%s '-' title \"%s\" with %s",
+    gnuplot_cmd(handle, "%s '-' title \"%s\" with %s \\",
         cmd, title[0], handle->pstyle);
 
     for (int i = 1; i < l; i++) {
-        sprintf(tmp, ", '-' title \"%s\" with %s",
+        gnuplot_printf(handle, ", '-' title \"%s\" with %s \\",
             title[i], handle->pstyle);
-
-        if (strlen(buf) + strlen(tmp) < 2047) {
-            strcpy(buf + strlen(buf), tmp);
-        } else {
-            return;
-        }
     }
 
-    gnuplot_cmd(handle, buf);
+    gnuplot_cmd(handle, "");
 
     for (int i = 0; i < l; i++) {
         for (int j = 0; j < n[i]; j++) {
-            gnuplot_cmd(handle, "%11le %11le", x[i][j], y[i][j]);
+            gnuplot_printf(handle, "%11le %11le", x[i][j], y[i][j]);
         }
 
         gnuplot_cmd(handle, "e");

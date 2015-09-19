@@ -118,6 +118,36 @@ void gnuplot_cmd(gnuplot_ctrl* handle, char const* cmd, ...);
 
 /*--------------------------------------------------------------------------*/
 /**
+  @brief    Sends a string to an active gnuplot session, without flush.
+  @param    handle Gnuplot session control handle
+  @param    cmd    Command to send, same as a printf statement.
+
+  This sends a string to an active gnuplot session, without flush.
+  The command syntax is the same as printf.
+
+  It is useful if you want to put a huge amount of data to gnuplot.
+
+  Examples:
+
+  @code
+    gnuplot_cmd(g, "plot '-' with lines");
+
+    for (int i = 0; i < n; i++) {
+        gnuplot_printf(g, "%11e", data[i]);
+    }
+    gnuplot_cmd(g, "e");
+  @endcode
+
+  Since the communication to the gnuplot process is run through
+  a standard Unix pipe, it is only unidirectional. This means that
+  it is not possible for this interface to query an error status
+  back from gnuplot.
+ */
+/*--------------------------------------------------------------------------*/
+void gnuplot_printf(gnuplot_ctrl* handle, char const* cmd, ...);
+
+/*--------------------------------------------------------------------------*/
+/**
   @brief    Change the plotting style of a gnuplot session.
   @param    handle Gnuplot session control handle
   @param    plot_style Plotting-style to use (character string)

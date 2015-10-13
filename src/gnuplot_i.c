@@ -119,11 +119,11 @@ void gnuplot_printf(gnuplot_ctrl* handle, char const* cmd, ...)
 
 void gnuplot_setstyle(gnuplot_ctrl* handle, char* plot_style)
 {
-    if (strcmp(plot_style, "lines") && strcmp(plot_style, "points") && strcmp(plot_style, "linespoints") && strcmp(plot_style, "impulses") && strcmp(plot_style, "dots") && strcmp(plot_style, "steps") && strcmp(plot_style, "errorbars") && strcmp(plot_style, "boxes") && strcmp(plot_style, "boxerrorbars")) {
+    if (strstr(plot_style, "lines") || strstr(plot_style, "points") || strstr(plot_style, "linespoints") || strstr(plot_style, "impulses") || strstr(plot_style, "dots") || strstr(plot_style, "steps") || strstr(plot_style, "errorbars") || strstr(plot_style, "boxes") || strstr(plot_style, "boxerrorbars")) {
+        strcpy(handle->pstyle, plot_style);
+    } else {
         fprintf(stderr, "warning: unknown requested style: using points\n");
         strcpy(handle->pstyle, "points");
-    } else {
-        strcpy(handle->pstyle, plot_style);
     }
 }
 

@@ -55,12 +55,14 @@ extern "C" {
 typedef struct _GNUPLOT_CTRL_ {
     /** Pipe to gnuplot process */
     FILE* gnucmd;
+    /** Output buffer */
+    char* BUF;
 
     /** Number of currently active plots */
     int nplots;
     /** Current plotting style */
     char pstyle[128];
-    /** if we are in multiplot */
+    /** If we are in multiplot */
     int multiplot;
 } gnuplot_ctrl;
 

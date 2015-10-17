@@ -40,9 +40,8 @@
                                 Defines
  ---------------------------------------------------------------------------*/
 
-// alloc the buffer (64K)
+// set the buffer size (64K)
 #define BUF_SIZE 1 << 16
-char* BUF;
 
 /*---------------------------------------------------------------------------
                           Prototype Functions
@@ -78,8 +77,8 @@ gnuplot_ctrl* gnuplot_init(void)
     }
 
     // set the buffer, in an easy way
-    BUF = (char*)malloc(BUF_SIZE);
-    setbuf(handle->gnucmd, BUF);
+    handle->BUF = (char*)malloc(BUF_SIZE);
+    setbuf(handle->gnucmd, handle->BUF);
 
     return handle;
 }
@@ -91,7 +90,7 @@ void gnuplot_close(gnuplot_ctrl* handle)
         return;
     }
 
-    free(BUF);
+    free(handle->BUF);
     free(handle);
 }
 

@@ -67,6 +67,7 @@ gnuplot_ctrl* gnuplot_init(void)
      */
     handle = (gnuplot_ctrl*)malloc(sizeof(gnuplot_ctrl));
     handle->nplots = 0;
+    handle->multiplot = 0;
     gnuplot_setstyle(handle, "points");
 
     handle->gnucmd = popen("gnuplot", "w");
@@ -117,6 +118,22 @@ void gnuplot_printf(gnuplot_ctrl* handle, char const* cmd, ...)
     fputs("\n", handle->gnucmd);
 }
 
+void gnuplot_multiplot(gnuplot_ctrl* handle, char* opt)
+{
+    if (handle->multiplot == 0) {
+        if (opt != NULL) {
+            gnuplot_cmd(handle, "set multiplot %s", opt);
+        } else {
+            gnuplot_cmd(handle, "set multiplot");
+        }
+
+        handle->multiplot = 1;
+    } else {
+        gnuplot_cmd(handle, "unset multiplot");
+        handle->multiplot = 0;
+    }
+}
+
 void gnuplot_setstyle(gnuplot_ctrl* handle, char* plot_style)
 {
     if (strstr(plot_style, "lines") || strstr(plot_style, "points") || strstr(plot_style, "linespoints") || strstr(plot_style, "impulses") || strstr(plot_style, "dots") || strstr(plot_style, "steps") || strstr(plot_style, "errorbars") || strstr(plot_style, "boxes") || strstr(plot_style, "boxerrorbars")) {
@@ -150,7 +167,7 @@ void gnuplot_plot_x(
 {
     if (handle == NULL || d == NULL || (n < 1))
         return;
-    char const* cmd = (handle->nplots > 0) ? "replot" : "plot";
+    char const* cmd = (handle->multiplot == 0 && handle->nplots > 0) ? "replot" : "plot";
     title = (title == NULL) ? "(none)" : title;
 
     gnuplot_cmd(handle, "%s '-' title \"%s\" with %s",
@@ -177,7 +194,7 @@ void gnuplot_plot_multi_x(
         if (d[i] == NULL)
             return;
     }
-    char const* cmd = (handle->nplots > 0) ? "replot" : "plot";
+    char const* cmd = (handle->multiplot == 0 && handle->nplots > 0) ? "replot" : "plot";
 
     if (title == NULL) {
         for (int i = 0; i < l; i++) {
@@ -219,7 +236,7 @@ void gnuplot_plot_xy(
 {
     if (handle == NULL || x == NULL || y == NULL || (n < 1))
         return;
-    char const* cmd = (handle->nplots > 0) ? "replot" : "plot";
+    char const* cmd = (handle->multiplot == 0 && handle->nplots > 0) ? "replot" : "plot";
     title = (title == NULL) ? "(none)" : title;
 
     gnuplot_cmd(handle, "%s '-' title \"%s\" with %s",
@@ -247,7 +264,7 @@ void gnuplot_plot_x_multi_y(
         if (y[i] == NULL)
             return;
     }
-    char const* cmd = (handle->nplots > 0) ? "replot" : "plot";
+    char const* cmd = (handle->multiplot == 0 && handle->nplots > 0) ? "replot" : "plot";
 
     if (title == NULL) {
         for (int i = 0; i < l; i++) {
@@ -294,7 +311,7 @@ void gnuplot_plot_multi_xy(
         if (x[i] == NULL || y[i] == NULL || (n[i] < 1))
             return;
     }
-    char const* cmd = (handle->nplots > 0) ? "replot" : "plot";
+    char const* cmd = (handle->multiplot == 0 && handle->nplots > 0) ? "replot" : "plot";
 
     if (title == NULL) {
         for (int i = 0; i < l; i++) {
@@ -333,7 +350,7 @@ void gnuplot_plot_slope(
     double b,
     char* title)
 {
-    char const* cmd = (handle->nplots > 0) ? "replot" : "plot";
+    char const* cmd = (handle->multiplot == 0 && handle->nplots > 0) ? "replot" : "plot";
     title = (title == NULL) ? "(none)" : title;
 
     gnuplot_cmd(handle, "%s %18e * x + %18e title \"%s\" with %s",
@@ -347,7 +364,7 @@ void gnuplot_plot_equation(
     char* equation,
     char* title)
 {
-    char const* cmd = (handle->nplots > 0) ? "replot" : "plot";
+    char const* cmd = (handle->multiplot == 0 && handle->nplots > 0) ? "replot" : "plot";
     title = (title == NULL) ? "(none)" : title;
 
     gnuplot_cmd(handle, "%s %s title \"%s\" with %s",

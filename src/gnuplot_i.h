@@ -59,7 +59,9 @@ typedef struct _GNUPLOT_CTRL_ {
     /** Number of currently active plots */
     int nplots;
     /** Current plotting style */
-    char pstyle[32];
+    char pstyle[128];
+    /** if we are in multiplot */
+    int multiplot;
 } gnuplot_ctrl;
 
 /*---------------------------------------------------------------------------
@@ -149,6 +151,20 @@ void gnuplot_cmd(gnuplot_ctrl* handle, char const* cmd, ...);
  */
 /*--------------------------------------------------------------------------*/
 void gnuplot_printf(gnuplot_ctrl* handle, char const* cmd, ...);
+
+/*--------------------------------------------------------------------------*/
+/**
+  @brief    Switch a gnuplot session from/to multiplot mode
+  @param    handle Gnuplot session control handle.
+  @param    other options append to "set multiplot"
+  @return   void
+
+  When in a multiplot mode, gnuplot_i will only send plot instead of replot.
+  You can append your options to "set multiplot", this is optional.
+
+ */
+/*--------------------------------------------------------------------------*/
+void gnuplot_multiplot(gnuplot_ctrl* handle, char* opt);
 
 /*--------------------------------------------------------------------------*/
 /**

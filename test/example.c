@@ -116,6 +116,28 @@ int main(int argc, char *argv[])
 
 
     /*
+     * Multiplot
+     */
+
+    printf("\n\n") ;
+    printf("*** multiplot test\n") ;
+    gnuplot_resetplot(h1) ;
+    gnuplot_setstyle(h1, "lines lw 3") ;
+    gnuplot_multiplot(h1, "layout 2,2");
+
+    printf("plot 1: sin(x)\n") ;
+    gnuplot_plot_equation(h1, "sin(x)", "sin(x)") ;
+    printf("plot 2: x*sin(x)\n") ;
+    gnuplot_plot_equation(h1, "x*sin(x)", "x*sin(x)") ;
+    printf("plot 3: log(x)/x\n") ;
+    gnuplot_plot_equation(h1, "log(x)/x", "log(x)/x");
+    printf("plot 4: sin(x)/x\n") ;
+    gnuplot_plot_equation(h1, "sin(x)/x", "sin(x)/x") ;
+    gnuplot_multiplot(h1, NULL);
+    sleep(SLEEP_LGTH) ;
+
+
+    /*
      * Multiple output screens
      */
 
@@ -142,7 +164,7 @@ int main(int argc, char *argv[])
     printf("window 4: sin(x)/x\n") ;
     gnuplot_plot_equation(h4, "sin(x)/x", "sin(x)/x") ;
     sleep(SLEEP_LGTH) ;
-    
+
     /*
      * close gnuplot handles
      */

@@ -32,6 +32,7 @@ extern "C" {
                                 Includes
  ---------------------------------------------------------------------------*/
 #include <stdio.h>
+#include <stdint.h>
 
 /*---------------------------------------------------------------------------
                                 New Types
@@ -59,11 +60,11 @@ typedef struct _GNUPLOT_CTRL_ {
     char* BUF;
 
     /** Number of currently active plots */
-    int nplots;
+    uint32_t nplots;
     /** Current plotting style */
     char pstyle[128];
     /** If we are in multiplot */
-    int multiplot;
+    uint32_t multiplot;
 } gnuplot_ctrl;
 
 /*---------------------------------------------------------------------------
@@ -245,7 +246,7 @@ void gnuplot_resetplot(gnuplot_ctrl* handle);
   @code
     gnuplot_ctrl* h;
     double d[50];
-    int i;
+    uint32_t i;
 
     h = gnuplot_init();
     for (i = 0; i < 50; i++) {
@@ -260,7 +261,7 @@ void gnuplot_resetplot(gnuplot_ctrl* handle);
 void gnuplot_plot_x(
     gnuplot_ctrl* handle,
     double* d,
-    int n,
+    uint32_t n,
     char* title);
 
 /*--------------------------------------------------------------------------*/
@@ -289,7 +290,7 @@ void gnuplot_plot_x(
     char t0[] = "2^i";
     char t1[] = "i^2";
     char* t[2] = { t0, t1 };
-    int i;
+    uint32_t i;
 
     h = gnuplot_init();
     for (i = 0; i < 50; i++) {
@@ -308,8 +309,8 @@ void gnuplot_plot_x(
 void gnuplot_plot_multi_x(
     gnuplot_ctrl* handle,
     double** d,
-    int n,
-    int l,
+    uint32_t n,
+    uint32_t l,
     char** title);
 
 /*--------------------------------------------------------------------------*/
@@ -332,7 +333,7 @@ void gnuplot_plot_multi_x(
     gnuplot_ctrl* h;
     double x[50];
     double y[50];
-    int i;
+    uint32_t i;
 
     h = gnuplot_init();
     for (i = 0; i < 50; i++) {
@@ -349,7 +350,7 @@ void gnuplot_plot_xy(
     gnuplot_ctrl* handle,
     double* x,
     double* y,
-    int n,
+    uint32_t n,
     char* title);
 
 /*--------------------------------------------------------------------------*/
@@ -380,7 +381,7 @@ void gnuplot_plot_xy(
     char t0[] = "2^i";
     char t1[] = "i^2";
     char* t[2] = { t0, t1 };
-    int i;
+    uint32_t i;
 
     h = gnuplot_init();
     for (i = 0; i < 50; i++) {
@@ -402,8 +403,8 @@ void gnuplot_plot_x_multi_y(
     gnuplot_ctrl* handle,
     double* x,
     double** y,
-    int n,
-    int l,
+    uint32_t n,
+    uint32_t l,
     char** title);
 
 /*--------------------------------------------------------------------------*/
@@ -433,11 +434,11 @@ void gnuplot_plot_x_multi_y(
     double** y = (double**)malloc(sizeof(double*) * 2);
     y[0] = (double*)malloc(sizeof(double) * 50);
     y[1] = (double*)malloc(sizeof(double) * 50);
-    int a[2] = { 50, 50 };
+    uint32_t a[2] = { 50, 50 };
     char t0[] = "2^i";
     char t1[] = "i^2";
     char* t[2] = { t0, t1 };
-    int i;
+    uint32_t i;
 
     h = gnuplot_init();
     for (i = 0; i < 50; i++) {
@@ -463,8 +464,8 @@ void gnuplot_plot_multi_xy(
     gnuplot_ctrl* handle,
     double** x,
     double** y,
-    int* n,
-    int l,
+    uint32_t* n,
+    uint32_t l,
     char** title);
 
 /*--------------------------------------------------------------------------*/

@@ -161,7 +161,7 @@ void gnuplot_resetplot(gnuplot_ctrl* handle)
 void gnuplot_plot_x(
     gnuplot_ctrl* handle,
     double* d,
-    int n,
+    uint32_t n,
     char* title)
 {
     if (handle == NULL || d == NULL || (n < 1))
@@ -172,7 +172,7 @@ void gnuplot_plot_x(
     gnuplot_cmd(handle, "%s '-' title \"%s\" with %s",
         cmd, title, handle->pstyle);
 
-    for (int i = 0; i < n; i++) {
+    for (uint32_t i = 0; i < n; i++) {
         gnuplot_printf(handle, "%18e", d[i]);
     }
     gnuplot_cmd(handle, "e");
@@ -183,24 +183,24 @@ void gnuplot_plot_x(
 void gnuplot_plot_multi_x(
     gnuplot_ctrl* handle,
     double** d,
-    int n,
-    int l,
+    uint32_t n,
+    uint32_t l,
     char** title)
 {
     if (handle == NULL || d == NULL || (n < 1) || (l < 1))
         return;
-    for (int i = 0; i < l; i++) {
+    for (uint32_t i = 0; i < l; i++) {
         if (d[i] == NULL)
             return;
     }
     char const* cmd = (handle->multiplot == 0 && handle->nplots > 0) ? "replot" : "plot";
 
     if (title == NULL) {
-        for (int i = 0; i < l; i++) {
+        for (uint32_t i = 0; i < l; i++) {
             title[i] = "(none)";
         }
     } else {
-        for (int i = 0; i < l; i++) {
+        for (uint32_t i = 0; i < l; i++) {
             title[i] = (title[i] == NULL) ? "(none)" : title[i];
         }
     }
@@ -208,15 +208,15 @@ void gnuplot_plot_multi_x(
     gnuplot_printf(handle, "%s '-' title \"%s\" with %s \\",
         cmd, title[0], handle->pstyle);
 
-    for (int i = 1; i < l; i++) {
+    for (uint32_t i = 1; i < l; i++) {
         gnuplot_printf(handle, ", '-' title \"%s\" with %s \\",
             title[i], handle->pstyle);
     }
 
     gnuplot_cmd(handle, "");
 
-    for (int i = 0; i < l; i++) {
-        for (int j = 0; j < n; j++) {
+    for (uint32_t i = 0; i < l; i++) {
+        for (uint32_t j = 0; j < n; j++) {
             gnuplot_printf(handle, "%18e", d[i][j]);
         }
 
@@ -230,7 +230,7 @@ void gnuplot_plot_xy(
     gnuplot_ctrl* handle,
     double* x,
     double* y,
-    int n,
+    uint32_t n,
     char* title)
 {
     if (handle == NULL || x == NULL || y == NULL || (n < 1))
@@ -241,7 +241,7 @@ void gnuplot_plot_xy(
     gnuplot_cmd(handle, "%s '-' title \"%s\" with %s",
         cmd, title, handle->pstyle);
 
-    for (int i = 0; i < n; i++) {
+    for (uint32_t i = 0; i < n; i++) {
         gnuplot_printf(handle, "%18e %18e", x[i], y[i]);
     }
     gnuplot_cmd(handle, "e");
@@ -253,24 +253,24 @@ void gnuplot_plot_x_multi_y(
     gnuplot_ctrl* handle,
     double* x,
     double** y,
-    int n,
-    int l,
+    uint32_t n,
+    uint32_t l,
     char** title)
 {
     if (handle == NULL || x == NULL || y == NULL || (n < 1) || (l < 1))
         return;
-    for (int i = 0; i < l; i++) {
+    for (uint32_t i = 0; i < l; i++) {
         if (y[i] == NULL)
             return;
     }
     char const* cmd = (handle->multiplot == 0 && handle->nplots > 0) ? "replot" : "plot";
 
     if (title == NULL) {
-        for (int i = 0; i < l; i++) {
+        for (uint32_t i = 0; i < l; i++) {
             title[i] = "(none)";
         }
     } else {
-        for (int i = 0; i < l; i++) {
+        for (uint32_t i = 0; i < l; i++) {
             title[i] = (title[i] == NULL) ? "(none)" : title[i];
         }
     }
@@ -278,15 +278,15 @@ void gnuplot_plot_x_multi_y(
     gnuplot_cmd(handle, "%s '-' title \"%s\" with %s \\",
         cmd, title[0], handle->pstyle);
 
-    for (int i = 1; i < l; i++) {
+    for (uint32_t i = 1; i < l; i++) {
         gnuplot_printf(handle, ", '-' title \"%s\" with %s \\",
             title[i], handle->pstyle);
     }
 
     gnuplot_cmd(handle, "");
 
-    for (int i = 0; i < l; i++) {
-        for (int j = 0; j < n; j++) {
+    for (uint32_t i = 0; i < l; i++) {
+        for (uint32_t j = 0; j < n; j++) {
             gnuplot_printf(handle, "%18e %18e", x[j], y[i][j]);
         }
 
@@ -300,24 +300,24 @@ void gnuplot_plot_multi_xy(
     gnuplot_ctrl* handle,
     double** x,
     double** y,
-    int* n,
-    int l,
+    uint32_t* n,
+    uint32_t l,
     char** title)
 {
     if (handle == NULL || x == NULL || y == NULL || n == NULL || (l < 1))
         return;
-    for (int i = 0; i < l; i++) {
+    for (uint32_t i = 0; i < l; i++) {
         if (x[i] == NULL || y[i] == NULL || (n[i] < 1))
             return;
     }
     char const* cmd = (handle->multiplot == 0 && handle->nplots > 0) ? "replot" : "plot";
 
     if (title == NULL) {
-        for (int i = 0; i < l; i++) {
+        for (uint32_t i = 0; i < l; i++) {
             title[i] = "(none)";
         }
     } else {
-        for (int i = 0; i < l; i++) {
+        for (uint32_t i = 0; i < l; i++) {
             title[i] = (title[i] == NULL) ? "(none)" : title[i];
         }
     }
@@ -325,15 +325,15 @@ void gnuplot_plot_multi_xy(
     gnuplot_cmd(handle, "%s '-' title \"%s\" with %s \\",
         cmd, title[0], handle->pstyle);
 
-    for (int i = 1; i < l; i++) {
+    for (uint32_t i = 1; i < l; i++) {
         gnuplot_printf(handle, ", '-' title \"%s\" with %s \\",
             title[i], handle->pstyle);
     }
 
     gnuplot_cmd(handle, "");
 
-    for (int i = 0; i < l; i++) {
-        for (int j = 0; j < n[i]; j++) {
+    for (uint32_t i = 0; i < l; i++) {
+        for (uint32_t j = 0; j < n[i]; j++) {
             gnuplot_printf(handle, "%18e %18e", x[i][j], y[i][j]);
         }
 

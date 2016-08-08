@@ -123,7 +123,7 @@ void gnuplot_close(gnuplot_ctrl* handle);
   back from gnuplot.
  */
 /*--------------------------------------------------------------------------*/
-void gnuplot_cmd(gnuplot_ctrl* handle, char const* cmd, ...);
+void gnuplot_cmd(gnuplot_ctrl* handle, const char* cmd, ...);
 
 /*--------------------------------------------------------------------------*/
 /**
@@ -153,7 +153,7 @@ void gnuplot_cmd(gnuplot_ctrl* handle, char const* cmd, ...);
   back from gnuplot.
  */
 /*--------------------------------------------------------------------------*/
-void gnuplot_printf(gnuplot_ctrl* handle, char const* cmd, ...);
+void gnuplot_printf(gnuplot_ctrl* handle, const char* cmd, ...);
 
 /*--------------------------------------------------------------------------*/
 /**
@@ -167,7 +167,7 @@ void gnuplot_printf(gnuplot_ctrl* handle, char const* cmd, ...);
 
  */
 /*--------------------------------------------------------------------------*/
-void gnuplot_multiplot(gnuplot_ctrl* handle, char* opt);
+void gnuplot_multiplot(gnuplot_ctrl* handle, const char* opt);
 
 /*--------------------------------------------------------------------------*/
 /**
@@ -190,7 +190,7 @@ void gnuplot_multiplot(gnuplot_ctrl* handle, char* opt);
   - boxeserrorbars
  */
 /*--------------------------------------------------------------------------*/
-void gnuplot_setstyle(gnuplot_ctrl* handle, char* plot_style);
+void gnuplot_setstyle(gnuplot_ctrl* handle, const char* plot_style);
 
 /*--------------------------------------------------------------------------*/
 /**
@@ -202,7 +202,7 @@ void gnuplot_setstyle(gnuplot_ctrl* handle, char* plot_style);
   Sets the x label for a gnuplot session.
  */
 /*--------------------------------------------------------------------------*/
-void gnuplot_set_xlabel(gnuplot_ctrl* handle, char* label);
+void gnuplot_set_xlabel(gnuplot_ctrl* handle, const char* label);
 
 /*--------------------------------------------------------------------------*/
 /**
@@ -214,7 +214,7 @@ void gnuplot_set_xlabel(gnuplot_ctrl* handle, char* label);
   Sets the y label for a gnuplot session.
  */
 /*--------------------------------------------------------------------------*/
-void gnuplot_set_ylabel(gnuplot_ctrl* handle, char* label);
+void gnuplot_set_ylabel(gnuplot_ctrl* handle, const char* label);
 
 /*--------------------------------------------------------------------------*/
 /**
@@ -262,7 +262,7 @@ void gnuplot_plot_x(
     gnuplot_ctrl* handle,
     double* d,
     uint32_t n,
-    char* title);
+    const char* title);
 
 /*--------------------------------------------------------------------------*/
 /**
@@ -311,7 +311,7 @@ void gnuplot_plot_multi_x(
     double** d,
     uint32_t n,
     uint32_t l,
-    char** title);
+    const char** title);
 
 /*--------------------------------------------------------------------------*/
 /**
@@ -351,7 +351,7 @@ void gnuplot_plot_xy(
     double* x,
     double* y,
     uint32_t n,
-    char* title);
+    const char* title);
 
 /*--------------------------------------------------------------------------*/
 /**
@@ -405,7 +405,7 @@ void gnuplot_plot_x_multi_y(
     double** y,
     uint32_t n,
     uint32_t l,
-    char** title);
+    const char** title);
 
 /*--------------------------------------------------------------------------*/
 /**
@@ -466,7 +466,7 @@ void gnuplot_plot_multi_xy(
     double** y,
     uint32_t* n,
     uint32_t l,
-    char** title);
+    const char** title);
 
 /*--------------------------------------------------------------------------*/
 /**
@@ -497,7 +497,7 @@ void gnuplot_plot_slope(
     gnuplot_ctrl* handle,
     double a,
     double b,
-    char* title);
+    const char* title);
 
 /*--------------------------------------------------------------------------*/
 /**
@@ -525,11 +525,11 @@ void gnuplot_plot_slope(
 /*--------------------------------------------------------------------------*/
 void gnuplot_plot_equation(
     gnuplot_ctrl* handle,
-    char* equation,
-    char* title);
+    const char* equation,
+    const char* title);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif
+#endif // #ifndef _GNUPLOT_PIPES_H_

@@ -136,10 +136,10 @@ void gnuplot_multiplot(gnuplot_ctrl* handle, const char* opt)
 void gnuplot_setstyle(gnuplot_ctrl* handle, const char* plot_style)
 {
     if (strstr(plot_style, "lines") || strstr(plot_style, "points") || strstr(plot_style, "linespoints") || strstr(plot_style, "impulses") || strstr(plot_style, "dots") || strstr(plot_style, "steps") || strstr(plot_style, "errorbars") || strstr(plot_style, "boxes") || strstr(plot_style, "boxerrorbars")) {
-        strcpy(handle->pstyle, plot_style);
+        strncpy(handle->pstyle, plot_style, 128 - 1);
     } else {
         fprintf(stderr, "warning: unknown requested style: using points\n");
-        strcpy(handle->pstyle, "points");
+        strncpy(handle->pstyle, "points", 128 - 1);
     }
 }
 

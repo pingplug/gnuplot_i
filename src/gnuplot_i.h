@@ -517,7 +517,7 @@ void gnuplot_plot_slope(
     char eq[80];
 
     h = gnuplot_init();
-    strcpy(eq, "sin(x) * cos(2 * x)");
+    strncpy(eq, "sin(x) * cos(2 * x)", 80 - 1);
     gnuplot_plot_equation(h, eq, "sine wave", normal);
     gnuplot_close(h);
   @endcode
